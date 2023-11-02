@@ -1,4 +1,4 @@
-//#define GLFW_INCLUDE_VULKAN
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #define GLM_FORCE_RADIANS
@@ -13,6 +13,9 @@ int main()
 	GLFWwindow* window = glfwCreateWindow(800, 600, "vulkanTW", nullptr, nullptr);
 
 	uint32_t extensionCount = 0;
+	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+	std::cout << extensionCount << " extensions supported\n";
 	
 	while (!glfwWindowShouldClose(window))
 	{

@@ -10,8 +10,21 @@ public:
 	~VulkanRenderer();
 
 	void CreateInstance();
+	VkResult CreateDebugUtilsMessengerEXT(
+		VkInstance instance,
+		const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+		const VkAllocationCallbacks* pAllocator,
+		VkDebugUtilsMessengerEXT* pDebugMessenger);
+
+	VkResult DestroyDebugUtilsMessengerEXT(
+		VkInstance instance,
+		VkDebugUtilsMessengerEXT debugMessenger,
+		const VkAllocationCallbacks* pAllocator);
 private:
-	VkInstance mInstance;
-	VkApplicationInfo mVkAppInfo;
-	VkInstanceCreateInfo mVkCreateInfo;
+	VkInstance mInstance{};
+	VkApplicationInfo mVkAppInfo{};
+	VkInstanceCreateInfo mVkCreateInfo{};
+	VkDebugUtilsMessengerEXT mDebugMessenger{};
+
+	const bool mEnableValidationLayers = true;
 };

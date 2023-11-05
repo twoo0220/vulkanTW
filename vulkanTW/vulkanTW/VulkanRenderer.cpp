@@ -2,6 +2,9 @@
 
 VulkanRenderer::VulkanRenderer()
 {
+#ifdef NDEBUG
+	mEnableValidationLayers = false;
+#endif
 }
 
 VulkanRenderer::~VulkanRenderer()
@@ -30,5 +33,27 @@ void VulkanRenderer::CreateInstance()
 	if (vkCreateInstance(&mVkCreateInfo, nullptr, &mInstance) != VK_SUCCESS)
 	{
 		throw std::runtime_error("falied to create instance!");
+	}
+}
+
+VkResult VulkanRenderer::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
+{
+	PFN_vkCreateDebugUtilsMessengerEXT func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+	if (func != nullptr)
+	{
+		return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+	}
+	else
+	{
+		return VK_ERROR_EXTENSION_NOT_PRESENT;
+	}
+}
+
+VkResult VulkanRenderer::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator)
+{
+	PFN_vkDestroyDebugUtilsMessengerEXT func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyUtilsMessengerEXT");
+	if (func != nullptr)
+	{
+		func(instance, debugMessenger, pAllocator);
 	}
 }

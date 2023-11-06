@@ -31,6 +31,7 @@ void MainEntry::initWindow()
 void MainEntry::initVulkan()
 {
 	mVkRenderer.CreateInstance();
+	mVkRenderer.setupDebugMessenger();
 }
 
 void MainEntry::mainLoop()

@@ -31,6 +31,7 @@ private:
 		void* pUserData);
 
 	std::vector<const char*> getRequireExtensions();
+	bool checkValidationLayerSupport();
 
 	VkInstance mInstance{};
 	VkApplicationInfo mVkAppInfo{};

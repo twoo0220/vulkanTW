@@ -19,6 +19,11 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::CreateInstance()
 {
+	if (mEnableValidationLayers && !checkValidationLayerSupport())
+	{
+		throw std::runtime_error("validation layers requested, but not available");
+	}
+
 	mVkAppInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	mVkAppInfo.pApplicationName = "vulkanTW";
 	mVkAppInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -32,7 +37,21 @@ void VulkanRenderer::CreateInstance()
 	std::vector<const char*> extensions = getRequireExtensions();
 	mVkCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 	mVkCreateInfo.ppEnabledExtensionNames = extensions.data();
-	mVkCreateInfo.enabledLayerCount = 0;
+
+	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+	if (mEnableValidationLayers == true)
+	{
+		mVkCreateInfo.enabledLayerCount = static_cast<uint32_t>(mValidationLayers.size());
+		mVkCreateInfo.ppEnabledLayerNames = mValidationLayers.data();
+
+		populateDebugMessengerCreateInfo(debugCreateInfo);
+		mVkCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+	}
+	else
+	{
+		mVkCreateInfo.enabledLayerCount = 0;
+		mVkCreateInfo.pNext = nullptr;
+	}
 
 	if (vkCreateInstance(&mVkCreateInfo, nullptr, &mInstance) != VK_SUCCESS)
 	{
@@ -65,7 +84,7 @@ void VulkanRenderer::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreat
 
 VkResult VulkanRenderer::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
 {
-	auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+	PFN_vkCreateDebugUtilsMessengerEXT func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 	if (func != nullptr)
 	{
 		return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -102,4 +121,32 @@ std::vector<const char*> VulkanRenderer::getRequireExtensions()
 	}
 
 	return extensions;
+}
+
+bool VulkanRenderer::checkValidationLayerSupport()
+{
+	uint32_t layerCount = 0;
+	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+	std::vector<VkLayerProperties> availableLayers(layerCount);
+	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+	for (const char* layerName : mValidationLayers)
+	{
+		bool layerFound = false;
+		for (const auto& layerProperties : availableLayers)
+		{
+			if (strcmp(layerName, layerProperties.layerName) == 0)
+			{
+				layerFound = true;
+				break;
+			}
+		}
+
+		if (layerFound == false)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }

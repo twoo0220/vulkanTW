@@ -1,10 +1,10 @@
 #include "VulkanRenderer.h"
 
 VulkanRenderer::VulkanRenderer()
-{
 #ifdef NDEBUG
-	mEnableValidationLayers = false;
+	: mEnableValidationLayers(false)
 #endif
+{
 }
 
 VulkanRenderer::~VulkanRenderer()
@@ -66,9 +66,10 @@ void VulkanRenderer::setupDebugMessenger()
 		return;
 	}
 
-	populateDebugMessengerCreateInfo(mCreateInfo);
+	VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+	populateDebugMessengerCreateInfo(createInfo);
 
-	if (CreateDebugUtilsMessengerEXT(mInstance, &mCreateInfo, nullptr, &mDebugMessenger) != VK_SUCCESS)
+	if (CreateDebugUtilsMessengerEXT(mInstance, &createInfo, nullptr, &mDebugMessenger) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to set up debug messenger!");
 	}

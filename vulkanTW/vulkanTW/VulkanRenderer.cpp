@@ -75,6 +75,29 @@ void VulkanRenderer::setupDebugMessenger()
 	}
 }
 
+void VulkanRenderer::pickPhysicalDevice()
+{
+	uint32_t deviceCount = 0;
+	vkEnumeratePhysicalDevices(mInstance, &deviceCount, nullptr);
+
+	if (deviceCount == 0)
+	{
+		throw std::runtime_error("failed to find GPUs with Vulkan support!");
+	}
+
+	std::vector<VkPhysicalDevice> devices(deviceCount);
+	vkEnumeratePhysicalDevices(mInstance, &deviceCount, devices.data());
+
+	for (const auto& device : devices)
+	{
+		if (isDeviceSuitable(device))
+		{
+			mPhysicalDevice = device;
+			break;
+		}
+	}
+}
+
 void VulkanRenderer::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 {
 	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -150,4 +173,10 @@ bool VulkanRenderer::checkValidationLayerSupport()
 	}
 
 	return true;
+}
+
+bool VulkanRenderer::isDeviceSuitable(VkPhysicalDevice device)
+{
+	QueueFamilyIndices indices;
+	return indices.isComplete();
 }

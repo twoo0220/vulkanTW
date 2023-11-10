@@ -40,6 +40,7 @@ private:
 	std::vector<const char*> getRequireExtensions();
 	bool checkValidationLayerSupport();
 	bool isDeviceSuitable(VkPhysicalDevice device);
+	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 	VkInstance mInstance{};
 	VkApplicationInfo mVkAppInfo{};

@@ -184,26 +184,26 @@ bool VulkanRenderer::isDeviceSuitable(VkPhysicalDevice device)
 QueueFamilyIndices VulkanRenderer::findQueueFamilies(VkPhysicalDevice device)
 {
 	QueueFamilyIndices indices;
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, nullptr);
-	
-	std::vector<VkQueueFamilyProperties> queueFamilies(mQueueFamilyCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, queueFamilies.data());
+	//vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, nullptr);
+	//
+	//std::vector<VkQueueFamilyProperties> queueFamilies(mQueueFamilyCount);
+	//vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, queueFamilies.data());
 
-	int i = 0;
-	for (const auto& queueFamily : queueFamilies)
-	{
-		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-		{
-			indices.graphicsFamily = i;
-		}
+	//int i = 0;
+	//for (const auto& queueFamily : queueFamilies)
+	//{
+	//	if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+	//	{
+	//		indices.graphicsFamily = i;
+	//	}
 
-		if (indices.isComplete())
-		{
-			break;
-		}
+	//	if (indices.isComplete())
+	//	{
+	//		break;
+	//	}
 
-		++i;
-	}
+	//	++i;
+	//}
 
 	return indices;
 }

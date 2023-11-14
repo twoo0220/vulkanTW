@@ -36,6 +36,11 @@ void MainEntry::initVulkan()
 
 void MainEntry::mainLoop()
 {
+	glm::mat4 matrix{};
+	glm::vec4 vec{};
+	auto test = matrix * vec;
+	std::cout << test.a << std::endl;
+
 	while (!glfwWindowShouldClose(mWindow))
 	{
 		glfwPollEvents();

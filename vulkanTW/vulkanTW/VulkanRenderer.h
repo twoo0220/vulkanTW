@@ -4,20 +4,15 @@
 #include <stdexcept>
 #include <iostream>
 #include <vector>
+#include <optional>
 
 struct QueueFamilyIndices
 {
-	//std::optional<uint32_t> graphicsFamily;
-	std::vector<uint32_t> graphicsFamily;
+	std::optional<uint32_t> graphicsFamily;
 
 	bool isComplete()
 	{
-		//return graphicsFamily.has_value();
-		if (graphicsFamily.size() == 0)
-		{
-			return false;
-		}
-		return true;
+		return graphicsFamily.has_value();
 	}
 };
 
@@ -27,8 +22,8 @@ public:
 	VulkanRenderer();
 	~VulkanRenderer();
 
-	void CreateInstance();
-	void setupDebugMessenger();
+	bool CreateInstance();
+	bool setupDebugMessenger();
 	void pickPhysicalDevice();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
@@ -48,6 +43,8 @@ private:
 	VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 	VkDebugUtilsMessengerEXT mDebugMessenger{};
 	VkDebugUtilsMessengerCreateInfoEXT mCreateInfo{};
+
+	uint32_t mQueueFamilyCount = 0;
 
 	const bool mEnableValidationLayers = true;
 	const std::vector<const char*> mValidationLayers = { "VK_LAYER_KHRONOS_validation" };

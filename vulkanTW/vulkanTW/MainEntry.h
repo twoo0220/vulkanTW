@@ -23,7 +23,7 @@ public:
 
 private:
 	void initWindow();
-	void initVulkan();
+	bool initVulkan();
 	void mainLoop();
 	void cleanup();
 

@@ -17,11 +17,13 @@ VulkanRenderer::~VulkanRenderer()
 	vkDestroyInstance(mInstance, nullptr);
 }
 
-void VulkanRenderer::CreateInstance()
+bool VulkanRenderer::CreateInstance()
 {
 	if (mEnableValidationLayers && !checkValidationLayerSupport())
 	{
-		throw std::runtime_error("validation layers requested, but not available");
+		std::cerr << "validation layers requested, butnot available" << std::endl;
+		return false;
+		//throw std::runtime_error("validation layers requested, but not available");
 	}
 
 	mVkAppInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -55,15 +57,19 @@ void VulkanRenderer::CreateInstance()
 
 	if (vkCreateInstance(&mVkCreateInfo, nullptr, &mInstance) != VK_SUCCESS)
 	{
-		throw std::runtime_error("falied to create instance!");
+		std::cerr << "failed to create instance!" << std::endl;
+		//throw std::runtime_error("failed to create instance!");
+		return false;
 	}
+
+	return true;
 }
 
-void VulkanRenderer::setupDebugMessenger()
+bool VulkanRenderer::setupDebugMessenger()
 {
 	if (mEnableValidationLayers == false)
 	{
-		return;
+		return false;
 	}
 
 	VkDebugUtilsMessengerCreateInfoEXT createInfo{};
@@ -71,8 +77,12 @@ void VulkanRenderer::setupDebugMessenger()
 
 	if (CreateDebugUtilsMessengerEXT(mInstance, &createInfo, nullptr, &mDebugMessenger) != VK_SUCCESS)
 	{
-		throw std::runtime_error("failed to set up debug messenger!");
+		std::cerr << "failed to set up debug messenger!" << std::endl;
+		return false;
+		//throw std::runtime_error("failed to set up debug messenger!");
 	}
+
+	return true;
 }
 
 void VulkanRenderer::pickPhysicalDevice()
@@ -82,7 +92,9 @@ void VulkanRenderer::pickPhysicalDevice()
 
 	if (deviceCount == 0)
 	{
-		throw std::runtime_error("failed to find GPUs with Vulkan support!");
+		std::cerr << "failed to find GUPs with Vulkan support!" << std::endl;
+		return;
+		//throw std::runtime_error("failed to find GPUs with Vulkan support!");
 	}
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -184,26 +196,26 @@ bool VulkanRenderer::isDeviceSuitable(VkPhysicalDevice device)
 QueueFamilyIndices VulkanRenderer::findQueueFamilies(VkPhysicalDevice device)
 {
 	QueueFamilyIndices indices;
-	//vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, nullptr);
-	//
-	//std::vector<VkQueueFamilyProperties> queueFamilies(mQueueFamilyCount);
-	//vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, queueFamilies.data());
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, nullptr);
+	
+	std::vector<VkQueueFamilyProperties> queueFamilies(mQueueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, queueFamilies.data());
 
-	//int i = 0;
-	//for (const auto& queueFamily : queueFamilies)
-	//{
-	//	if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-	//	{
-	//		indices.graphicsFamily = i;
-	//	}
+	int i = 0;
+	for (const auto& queueFamily : queueFamilies)
+	{
+		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		{
+			indices.graphicsFamily = i;
+		}
 
-	//	if (indices.isComplete())
-	//	{
-	//		break;
-	//	}
+		if (indices.isComplete())
+		{
+			break;
+		}
 
-	//	++i;
-	//}
+		++i;
+	}
 
 	return indices;
 }

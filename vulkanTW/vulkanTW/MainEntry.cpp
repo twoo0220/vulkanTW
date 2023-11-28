@@ -14,8 +14,11 @@ MainEntry::~MainEntry()
 void MainEntry::run()
 {
 	initWindow();
-	initVulkan();
-	mainLoop();
+	if (true == initVulkan())
+	{
+		mainLoop();
+	}
+
 	cleanup();
 }
 
@@ -28,10 +31,19 @@ void MainEntry::initWindow()
 	mWindow = glfwCreateWindow(mWidth, mHeight, "VulkanTW", nullptr, nullptr);
 }
 
-void MainEntry::initVulkan()
+bool MainEntry::initVulkan()
 {
-	mVkRenderer.CreateInstance();
-	mVkRenderer.setupDebugMessenger();
+	if (mVkRenderer.CreateInstance() == false)
+	{
+		return false;
+	}
+
+	if (mVkRenderer.setupDebugMessenger() == false)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void MainEntry::mainLoop()

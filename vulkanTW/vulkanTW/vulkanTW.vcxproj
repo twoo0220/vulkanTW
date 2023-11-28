@@ -148,6 +148,7 @@
     <ClCompile Include="VulkanRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommonType.h" />
     <ClInclude Include="MainEntry.h" />
     <ClInclude Include="VulkanRenderer.h" />
   </ItemGroup>

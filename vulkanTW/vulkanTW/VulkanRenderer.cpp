@@ -19,7 +19,7 @@ VulkanRenderer::~VulkanRenderer()
 
 bool VulkanRenderer::CreateInstance()
 {
-	if (mEnableValidationLayers && !checkValidationLayerSupport())
+	if ((mEnableValidationLayers == true) && !checkValidationLayerSupport())
 	{
 		std::cerr << "validation layers requested, butnot available" << std::endl;
 		return false;
@@ -85,7 +85,7 @@ bool VulkanRenderer::setupDebugMessenger()
 	return true;
 }
 
-void VulkanRenderer::pickPhysicalDevice()
+bool VulkanRenderer::pickPhysicalDevice()
 {
 	uint32_t deviceCount = 0;
 	vkEnumeratePhysicalDevices(mInstance, &deviceCount, nullptr);
@@ -93,7 +93,7 @@ void VulkanRenderer::pickPhysicalDevice()
 	if (deviceCount == 0)
 	{
 		std::cerr << "failed to find GUPs with Vulkan support!" << std::endl;
-		return;
+		return false;
 		//throw std::runtime_error("failed to find GPUs with Vulkan support!");
 	}
 
@@ -108,6 +108,14 @@ void VulkanRenderer::pickPhysicalDevice()
 			break;
 		}
 	}
+
+	if (mPhysicalDevice == VK_NULL_HANDLE)
+	{
+		std::cerr << "failed to find a suitable GPU!" << std::endl;
+		return false;
+	}
+
+	return true;
 }
 
 void VulkanRenderer::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
@@ -133,7 +141,7 @@ VkResult VulkanRenderer::CreateDebugUtilsMessengerEXT(VkInstance instance, const
 
 void VulkanRenderer::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator)
 {
-	PFN_vkDestroyDebugUtilsMessengerEXT func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyUtilsMessengerEXT");
+	PFN_vkDestroyDebugUtilsMessengerEXT func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
 	if (func != nullptr)
 	{
 		func(instance, debugMessenger, pAllocator);
@@ -151,6 +159,7 @@ std::vector<const char*> VulkanRenderer::getRequireExtensions()
 	uint32_t glfwExtensionCount = 0;
 	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
 	if (mEnableValidationLayers == true)
 	{
 		extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -189,7 +198,7 @@ bool VulkanRenderer::checkValidationLayerSupport()
 
 bool VulkanRenderer::isDeviceSuitable(VkPhysicalDevice device)
 {
-	QueueFamilyIndices indices;
+	QueueFamilyIndices indices = findQueueFamilies(device);
 	return indices.isComplete();
 }
 

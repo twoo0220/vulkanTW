@@ -33,13 +33,12 @@ void MainEntry::initWindow()
 
 bool MainEntry::initVulkan()
 {
-	if (mVkRenderer.CreateInstance() == false)
+	if (!mVkRenderer.CreateInstance() ||
+		!mVkRenderer.setupDebugMessenger() ||
+		!mVkRenderer.pickPhysicalDevice()
+		)
 	{
-		return false;
-	}
-
-	if (mVkRenderer.setupDebugMessenger() == false)
-	{
+		std::cerr << "Vulkan initialization failed" << std::endl;
 		return false;
 	}
 
@@ -61,6 +60,7 @@ void MainEntry::mainLoop()
 
 void MainEntry::cleanup()
 {
+	//mVkRenderer.cleanUp();
 	glfwDestroyWindow(mWindow);
 	glfwTerminate();
 }

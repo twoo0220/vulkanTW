@@ -6,15 +6,7 @@
 #include <vector>
 #include <optional>
 
-struct QueueFamilyIndices
-{
-	std::optional<uint32_t> graphicsFamily;
-
-	bool isComplete()
-	{
-		return graphicsFamily.has_value();
-	}
-};
+#include "CommonType.h"
 
 class VulkanRenderer
 {
@@ -24,7 +16,7 @@ public:
 
 	bool CreateInstance();
 	bool setupDebugMessenger();
-	void pickPhysicalDevice();
+	bool pickPhysicalDevice();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 

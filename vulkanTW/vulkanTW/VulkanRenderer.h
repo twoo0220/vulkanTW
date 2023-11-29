@@ -17,6 +17,7 @@ public:
 	bool CreateInstance();
 	bool setupDebugMessenger();
 	bool pickPhysicalDevice();
+	bool createLogicalDevice();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 
@@ -33,6 +34,8 @@ private:
 	VkApplicationInfo mVkAppInfo{};
 	VkInstanceCreateInfo mVkCreateInfo{};
 	VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
+	VkDevice mDevice{};
+	VkQueue mGraphicsQueue{};
 	VkDebugUtilsMessengerEXT mDebugMessenger{};
 	VkDebugUtilsMessengerCreateInfoEXT mCreateInfo{};
 

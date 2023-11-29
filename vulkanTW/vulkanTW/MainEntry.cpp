@@ -35,7 +35,8 @@ bool MainEntry::initVulkan()
 {
 	if (!mVkRenderer.CreateInstance() ||
 		!mVkRenderer.setupDebugMessenger() ||
-		!mVkRenderer.pickPhysicalDevice()
+		!mVkRenderer.pickPhysicalDevice() ||
+		!mVkRenderer.createLogicalDevice()
 		)
 	{
 		std::cerr << "Vulkan initialization failed" << std::endl;

@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "VulkanRenderer.h"
+#include "ImGuiRenderer.h"
 
 class MainEntry
 {
@@ -29,6 +30,7 @@ private:
 
 	GLFWwindow* mWindow;
 	VulkanRenderer mVkRenderer;
+	ImGuiRenderer mImGuiRenderer;
 	const uint32_t mWidth;
 	const uint32_t mHeight;
 };

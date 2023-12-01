@@ -16,6 +16,8 @@ void MainEntry::run()
 	initWindow();
 	if (true == initVulkan())
 	{
+		mImGuiRenderer.initialize();
+
 		mainLoop();
 	}
 
@@ -56,6 +58,7 @@ void MainEntry::mainLoop()
 	while (!glfwWindowShouldClose(mWindow))
 	{
 		glfwPollEvents();
+		mImGuiRenderer.update();
 	}
 }
 

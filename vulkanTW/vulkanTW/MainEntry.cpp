@@ -16,7 +16,7 @@ void MainEntry::run()
 	initWindow();
 	if (true == initVulkan())
 	{
-		mImGuiRenderer.initialize();
+		//mImGuiRenderer.initialize();
 
 		mainLoop();
 	}
@@ -35,8 +35,9 @@ void MainEntry::initWindow()
 
 bool MainEntry::initVulkan()
 {
-	if (!mVkRenderer.CreateInstance() ||
+	if (!mVkRenderer.createInstance() ||
 		!mVkRenderer.setupDebugMessenger() ||
+		!mVkRenderer.createSurface(mWindow) ||
 		!mVkRenderer.pickPhysicalDevice() ||
 		!mVkRenderer.createLogicalDevice()
 		)
@@ -58,7 +59,7 @@ void MainEntry::mainLoop()
 	while (!glfwWindowShouldClose(mWindow))
 	{
 		glfwPollEvents();
-		mImGuiRenderer.update();
+		//mImGuiRenderer.update();
 	}
 }
 

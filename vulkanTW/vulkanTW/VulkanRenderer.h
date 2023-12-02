@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <vector>
-#include <optional>
+#include <set>
 
 #include "CommonType.h"
 
@@ -14,7 +14,8 @@ public:
 	VulkanRenderer();
 	~VulkanRenderer();
 
-	bool CreateInstance();
+	bool createInstance();
+	bool createSurface(GLFWwindow* window);
 	bool setupDebugMessenger();
 	bool pickPhysicalDevice();
 	bool createLogicalDevice();
@@ -30,16 +31,17 @@ private:
 	bool isDeviceSuitable(VkPhysicalDevice device);
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
+
+private:
 	VkInstance mInstance{};
-	VkApplicationInfo mVkAppInfo{};
-	VkInstanceCreateInfo mVkCreateInfo{};
+	VkSurfaceKHR mSurface{};
+
 	VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 	VkDevice mDevice{};
 	VkQueue mGraphicsQueue{};
+	VkQueue mPresentQueue{};
 	VkDebugUtilsMessengerEXT mDebugMessenger{};
 	VkDebugUtilsMessengerCreateInfoEXT mCreateInfo{};
-
-	uint32_t mQueueFamilyCount = 0;
 
 	const bool mEnableValidationLayers = true;
 	const std::vector<const char*> mValidationLayers = { "VK_LAYER_KHRONOS_validation" };

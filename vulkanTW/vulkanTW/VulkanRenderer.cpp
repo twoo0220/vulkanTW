@@ -16,10 +16,11 @@ VulkanRenderer::~VulkanRenderer()
 		DestroyDebugUtilsMessengerEXT(mInstance, mDebugMessenger, nullptr);
 	}
 
+	vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
 	vkDestroyInstance(mInstance, nullptr);
 }
 
-bool VulkanRenderer::CreateInstance()
+bool VulkanRenderer::createInstance()
 {
 	if ((mEnableValidationLayers == true) && !checkValidationLayerSupport())
 	{
@@ -28,39 +29,52 @@ bool VulkanRenderer::CreateInstance()
 		//throw std::runtime_error("validation layers requested, but not available");
 	}
 
-	mVkAppInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	mVkAppInfo.pApplicationName = "vulkanTW";
-	mVkAppInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-	mVkAppInfo.pEngineName = "No_Engine";
-	mVkAppInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	mVkAppInfo.apiVersion = VK_API_VERSION_1_3;
+	VkApplicationInfo appInfo{};
+	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	appInfo.pApplicationName = "vulkanTW";
+	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.pEngineName = "No_Engine";
+	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.apiVersion = VK_API_VERSION_1_3;
 
-	mVkCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	mVkCreateInfo.pApplicationInfo = &mVkAppInfo;
+	VkInstanceCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	createInfo.pApplicationInfo = &appInfo;
 
 	std::vector<const char*> extensions = getRequireExtensions();
-	mVkCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-	mVkCreateInfo.ppEnabledExtensionNames = extensions.data();
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+	createInfo.ppEnabledExtensionNames = extensions.data();
 
 	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
 	if (mEnableValidationLayers == true)
 	{
-		mVkCreateInfo.enabledLayerCount = static_cast<uint32_t>(mValidationLayers.size());
-		mVkCreateInfo.ppEnabledLayerNames = mValidationLayers.data();
+		createInfo.enabledLayerCount = static_cast<uint32_t>(mValidationLayers.size());
+		createInfo.ppEnabledLayerNames = mValidationLayers.data();
 
 		populateDebugMessengerCreateInfo(debugCreateInfo);
-		mVkCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+		createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 	}
 	else
 	{
-		mVkCreateInfo.enabledLayerCount = 0;
-		mVkCreateInfo.pNext = nullptr;
+		createInfo.enabledLayerCount = 0;
+		createInfo.pNext = nullptr;
 	}
 
-	if (vkCreateInstance(&mVkCreateInfo, nullptr, &mInstance) != VK_SUCCESS)
+	if (vkCreateInstance(&createInfo, nullptr, &mInstance) != VK_SUCCESS)
 	{
 		std::cerr << "failed to create instance!" << std::endl;
 		//throw std::runtime_error("failed to create instance!");
+		return false;
+	}
+
+	return true;
+}
+
+bool VulkanRenderer::createSurface(GLFWwindow* window)
+{
+	if (glfwCreateWindowSurface(mInstance, window, nullptr, &mSurface) != VK_SUCCESS)
+	{
+		std::cerr << "failed to create window surface!" << std::endl;
 		return false;
 	}
 
@@ -124,18 +138,24 @@ bool VulkanRenderer::createLogicalDevice()
 {
 	QueueFamilyIndices indices = findQueueFamilies(mPhysicalDevice);
 
-	VkDeviceQueueCreateInfo queueCreateInfo{};
-	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-	queueCreateInfo.queueCount = 1;
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfoVector{};
+	std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
 	float queuePriority = 1.0f;
-	queueCreateInfo.pQueuePriorities = &queuePriority;
+	for (uint32_t queueFamily : uniqueQueueFamilies)
+	{
+		VkDeviceQueueCreateInfo queueCreateInfo{};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = queueFamily;
+		queueCreateInfo.queueCount = 1;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+		queueCreateInfoVector.push_back(queueCreateInfo);
+	}
 
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	createInfo.pQueueCreateInfos = &queueCreateInfo;
-	createInfo.queueCreateInfoCount = 1;
+	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfoVector.size());
+	createInfo.pQueueCreateInfos = queueCreateInfoVector.data();
 	createInfo.enabledExtensionCount = 0;
 	createInfo.enabledLayerCount = 0;
 
@@ -155,6 +175,7 @@ bool VulkanRenderer::createLogicalDevice()
 	}
 
 	vkGetDeviceQueue(mDevice, indices.graphicsFamily.value(), 0, &mGraphicsQueue);
+	vkGetDeviceQueue(mDevice, indices.presentFamily.value(), 0, &mPresentQueue);
 	return true;
 }
 
@@ -245,10 +266,11 @@ bool VulkanRenderer::isDeviceSuitable(VkPhysicalDevice device)
 QueueFamilyIndices VulkanRenderer::findQueueFamilies(VkPhysicalDevice device)
 {
 	QueueFamilyIndices indices;
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, nullptr);
+	uint32_t queueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 	
-	std::vector<VkQueueFamilyProperties> queueFamilies(mQueueFamilyCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &mQueueFamilyCount, queueFamilies.data());
+	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
 	int i = 0;
 	for (const auto& queueFamily : queueFamilies)
@@ -258,7 +280,15 @@ QueueFamilyIndices VulkanRenderer::findQueueFamilies(VkPhysicalDevice device)
 			indices.graphicsFamily = i;
 		}
 
-		if (indices.isComplete())
+		VkBool32 presentSupport = false;
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, mSurface, &presentSupport);
+
+		if (presentSupport == true)
+		{
+			indices.presentFamily = i;
+		}
+
+		if (indices.isComplete() == true)
 		{
 			break;
 		}

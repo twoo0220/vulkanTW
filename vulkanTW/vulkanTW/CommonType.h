@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <vector>
 
 struct QueueFamilyIndices
 {
@@ -10,4 +11,11 @@ struct QueueFamilyIndices
 	{
 		return graphicsFamily.has_value() && presentFamily.has_value();
 	}
+};
+
+struct SwapChainSupportDetails
+{
+	VkSurfaceCapabilitiesKHR capabilities;
+	std::vector<VkSurfaceFormatKHR> formats;
+	std::vector<VkPresentModeKHR> presentModes;
 };

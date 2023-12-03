@@ -3,7 +3,6 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 #include <iostream>
-#include <vector>
 #include <set>
 
 #include "CommonType.h"
@@ -28,8 +27,13 @@ private:
 
 	std::vector<const char*> getRequireExtensions();
 	bool checkValidationLayerSupport();
+	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool isDeviceSuitable(VkPhysicalDevice device);
+
+	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
 
 private:
@@ -44,5 +48,10 @@ private:
 	VkDebugUtilsMessengerCreateInfoEXT mCreateInfo{};
 
 	const bool mEnableValidationLayers = true;
-	const std::vector<const char*> mValidationLayers = { "VK_LAYER_KHRONOS_validation" };
+	const std::vector<const char*> mValidationLayers = {
+		"VK_LAYER_KHRONOS_validation"
+	};
+	const std::vector<const char*> mDeviceExtensions = {
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME
+	};
 };

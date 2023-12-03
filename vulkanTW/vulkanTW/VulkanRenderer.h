@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <set>
+#include <limits> // Necessary for std::numeric_limits
+#include <algorithm> // Necessary for std::clamp
 
 #include "CommonType.h"
 
@@ -18,6 +20,7 @@ public:
 	bool setupDebugMessenger();
 	bool pickPhysicalDevice();
 	bool createLogicalDevice();
+	bool createSwapChain(GLFWwindow* window);
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 
@@ -31,6 +34,8 @@ private:
 	bool isDeviceSuitable(VkPhysicalDevice device);
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+	VkExtent2D chooseSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities);
 
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
@@ -44,6 +49,12 @@ private:
 	VkDevice mDevice{};
 	VkQueue mGraphicsQueue{};
 	VkQueue mPresentQueue{};
+
+	VkSwapchainKHR mSwapChain{};
+	std::vector<VkImage> mSwapChainImageVector;
+	VkFormat mSwapChainImageFormat;
+	VkExtent2D mSwapChainExtent;
+
 	VkDebugUtilsMessengerEXT mDebugMessenger{};
 	VkDebugUtilsMessengerCreateInfoEXT mCreateInfo{};
 

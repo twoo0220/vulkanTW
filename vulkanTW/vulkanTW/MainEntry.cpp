@@ -40,7 +40,9 @@ bool MainEntry::initVulkan()
 		!mVkRenderer.createSurface(mWindow) ||
 		!mVkRenderer.pickPhysicalDevice() ||
 		!mVkRenderer.createLogicalDevice() ||
-		!mVkRenderer.createSwapChain(mWindow)
+		!mVkRenderer.createSwapChain(mWindow) ||
+		!mVkRenderer.createImageViews() ||
+		!mVkRenderer.createGraphicsPipeline()
 		)
 	{
 		std::cerr << "Vulkan initialization failed" << std::endl;

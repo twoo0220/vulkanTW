@@ -22,6 +22,7 @@ public:
 	bool createLogicalDevice();
 	bool createSwapChain(GLFWwindow* window);
 	bool createImageViews();
+	bool createGraphicsPipeline();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 

@@ -21,6 +21,7 @@ public:
 	bool pickPhysicalDevice();
 	bool createLogicalDevice();
 	bool createSwapChain(GLFWwindow* window);
+	bool createImageViews();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 
@@ -52,6 +53,7 @@ private:
 
 	VkSwapchainKHR mSwapChain{};
 	std::vector<VkImage> mSwapChainImageVector;
+	std::vector<VkImageView> mSwapChainImageViewVector;
 	VkFormat mSwapChainImageFormat;
 	VkExtent2D mSwapChainExtent;
 

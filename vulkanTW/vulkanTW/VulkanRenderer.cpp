@@ -244,6 +244,22 @@ bool VulkanRenderer::createSwapChain(GLFWwindow* window)
 	return true;
 }
 
+bool VulkanRenderer::createImageViews()
+{
+	size_t scSize = mSwapChainImageVector.size();
+	mSwapChainImageViewVector.resize(scSize);
+	for (size_t i = 0; i < scSize; ++i)
+	{
+		VkImageViewCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		createInfo.image = mSwapChainImageVector[i];
+		createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		createInfo.format = mSwapChainImageFormat;
+	}
+
+	return true;
+}
+
 void VulkanRenderer::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 {
 	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;

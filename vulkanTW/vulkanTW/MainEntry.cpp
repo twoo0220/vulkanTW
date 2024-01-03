@@ -35,21 +35,23 @@ void MainEntry::initWindow()
 
 bool MainEntry::initVulkan()
 {
-	if (!mVkRenderer.createInstance() ||
-		!mVkRenderer.setupDebugMessenger() ||
-		!mVkRenderer.createSurface(mWindow) ||
-		!mVkRenderer.pickPhysicalDevice() ||
-		!mVkRenderer.createLogicalDevice() ||
-		!mVkRenderer.createSwapChain(mWindow) ||
-		!mVkRenderer.createImageViews() ||
-		!mVkRenderer.createGraphicsPipeline()
+	// 이 중 하나라도 실패하면 false
+	// 모두 성공하면 true
+	if (mVkRenderer.createInstance() &&
+		mVkRenderer.setupDebugMessenger() &&
+		mVkRenderer.createSurface(mWindow) &&
+		mVkRenderer.pickPhysicalDevice() &&
+		mVkRenderer.createLogicalDevice() &&
+		mVkRenderer.createSwapChain(mWindow) &&
+		mVkRenderer.createImageViews() &&
+		mVkRenderer.createGraphicsPipeline()
 		)
 	{
-		std::cerr << "Vulkan initialization failed" << std::endl;
-		return false;
+		return true;
 	}
 
-	return true;
+	std::cerr << "Vulkan initialization failed" << std::endl;
+	return false;
 }
 
 void MainEntry::mainLoop()

@@ -1,6 +1,4 @@
 #pragma once
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 #include <stdexcept>
 #include <iostream>
 #include <set>
@@ -8,6 +6,7 @@
 #include <algorithm> // Necessary for std::clamp
 
 #include "CommonType.h"
+#include "Shader.h"
 
 class VulkanRenderer
 {
@@ -38,25 +37,30 @@ private:
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	VkExtent2D chooseSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities);
+	VkShaderModule createShaderModule(const std::vector<char>& code);
 
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
 
 private:
-	VkInstance mInstance{};
-	VkSurfaceKHR mSurface{};
+	VkInstance mInstance = VK_NULL_HANDLE;
+	VkSurfaceKHR mSurface = VK_NULL_HANDLE;
 
 	VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
-	VkDevice mDevice{};
-	VkQueue mGraphicsQueue{};
-	VkQueue mPresentQueue{};
+	VkDevice mDevice = VK_NULL_HANDLE;
+	VkQueue mGraphicsQueue = VK_NULL_HANDLE;
+	VkQueue mPresentQueue = VK_NULL_HANDLE;
 
-	VkSwapchainKHR mSwapChain{};
+	VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
 	std::vector<VkImage> mSwapChainImageVector;
 	std::vector<VkImageView> mSwapChainImageViewVector;
 	VkFormat mSwapChainImageFormat;
 	VkExtent2D mSwapChainExtent;
+	VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
+
+	Shader vertexShader;
+	Shader fragShader;
 
 	VkDebugUtilsMessengerEXT mDebugMessenger{};
 	VkDebugUtilsMessengerCreateInfoEXT mCreateInfo{};

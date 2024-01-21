@@ -28,6 +28,12 @@
     <Filter Include="Source Files\Utility\ImGui">
       <UniqueIdentifier>{9022a8e1-3351-4a99-89c6-4552f3ba3969}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Shader">
+      <UniqueIdentifier>{bec3feec-a5a6-4e01-bae0-aa4b4f62801a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shader">
+      <UniqueIdentifier>{ce5962e1-b5e9-42c8-a0b2-a9ad4966bbd6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -62,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="ImGuiRenderer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,10 +110,19 @@
     <ClInclude Include="ImGuiRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\README.md">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\frag.spv">
+      <Filter>Source Files\Shader</Filter>
+    </None>
+    <None Include="shaders\vert.spv">
+      <Filter>Source Files\Shader</Filter>
     </None>
   </ItemGroup>
 </Project>

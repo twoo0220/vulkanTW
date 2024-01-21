@@ -35,8 +35,7 @@ void MainEntry::initWindow()
 
 bool MainEntry::initVulkan()
 {
-	// 이 중 하나라도 실패하면 false
-	// 모두 성공하면 true
+	// false if any fail, true if all succeed
 	if (mVkRenderer.createInstance() &&
 		mVkRenderer.setupDebugMessenger() &&
 		mVkRenderer.createSurface(mWindow) &&

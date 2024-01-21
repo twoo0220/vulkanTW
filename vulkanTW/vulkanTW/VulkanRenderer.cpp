@@ -14,23 +14,18 @@ VulkanRenderer::~VulkanRenderer()
 		vkDestroyImageView(mDevice, imageView, nullptr);
 	}
 
-	vkDestroySwapchainKHR(mDevice, mSwapChain, nullptr);
-	vkDestroyDevice(mDevice, nullptr);
-
-	if (true == mEnableValidationLayers)
-	{
-		DestroyDebugUtilsMessengerEXT(mInstance, mDebugMessenger, nullptr);
-	}
-
-	vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
-	vkDestroyInstance(mInstance, nullptr);
+	if (nullptr != mSwapChain)	vkDestroySwapchainKHR(mDevice, mSwapChain, nullptr);
+	if (nullptr != mDevice)		vkDestroyDevice(mDevice, nullptr);
+	if (true == mEnableValidationLayers)	DestroyDebugUtilsMessengerEXT(mInstance, mDebugMessenger, nullptr);
+	if (nullptr != mSurface)	vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
+	if (nullptr != mInstance)	vkDestroyInstance(mInstance, nullptr);
 }
 
 bool VulkanRenderer::createInstance()
 {
 	if ((true == mEnableValidationLayers) && !checkValidationLayerSupport())
 	{
-		std::cerr << "validation layers requested, butnot available" << std::endl;
+		std::cerr << "validation layers requested, but not available " << mEnableValidationLayers << std::endl;
 		return false;
 		//throw std::runtime_error("validation layers requested, but not available");
 	}

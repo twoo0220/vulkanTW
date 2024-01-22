@@ -43,6 +43,7 @@ bool MainEntry::initVulkan()
 		mVkRenderer.createLogicalDevice() &&
 		mVkRenderer.createSwapChain(mWindow) &&
 		mVkRenderer.createImageViews() &&
+		mVkRenderer.createRenderPass() &&
 		mVkRenderer.createGraphicsPipeline()
 		)
 	{

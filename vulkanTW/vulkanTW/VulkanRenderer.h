@@ -21,6 +21,7 @@ public:
 	bool createLogicalDevice();
 	bool createSwapChain(GLFWwindow* window);
 	bool createImageViews();
+	bool createRenderPass();
 	bool createGraphicsPipeline();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
@@ -55,8 +56,10 @@ private:
 	VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
 	std::vector<VkImage> mSwapChainImageVector;
 	std::vector<VkImageView> mSwapChainImageViewVector;
-	VkFormat mSwapChainImageFormat;
-	VkExtent2D mSwapChainExtent;
+
+	VkFormat mSwapChainImageFormat = VK_FORMAT_MAX_ENUM;
+	VkExtent2D mSwapChainExtent{};
+	VkRenderPass mRenderPass = VK_NULL_HANDLE;
 	VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
 
 	Shader vertexShader;

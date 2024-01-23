@@ -60,6 +60,7 @@ private:
 	VkFormat mSwapChainImageFormat = VK_FORMAT_MAX_ENUM;
 	VkExtent2D mSwapChainExtent{};
 	VkRenderPass mRenderPass = VK_NULL_HANDLE;
+	VkPipeline mGraphicsPipeline = VK_NULL_HANDLE;
 	VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
 
 	Shader vertexShader;

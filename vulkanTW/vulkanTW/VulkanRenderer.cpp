@@ -9,12 +9,13 @@ VulkanRenderer::VulkanRenderer()
 
 VulkanRenderer::~VulkanRenderer()
 {
+	if (nullptr != mGraphicsPipeline) vkDestroyPipeline(mDevice, mGraphicsPipeline, nullptr);
 	if (nullptr != mPipelineLayout) vkDestroyPipelineLayout(mDevice, mPipelineLayout, nullptr);
 	if (nullptr != mRenderPass) vkDestroyRenderPass(mDevice, mRenderPass, nullptr);
 
 	for (VkImageView imageView : mSwapChainImageViewVector)
 	{
-		vkDestroyImageView(mDevice, imageView, nullptr);
+		if (nullptr != imageView) vkDestroyImageView(mDevice, imageView, nullptr);
 	}
 
 	if (nullptr != mSwapChain)	vkDestroySwapchainKHR(mDevice, mSwapChain, nullptr);
@@ -320,7 +321,7 @@ bool VulkanRenderer::createGraphicsPipeline()
 {
 	std::vector<char> vertShaderCode = vertexShader.readShaderFile("shaders/vert.spv");
 	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-	if (nullptr != vertShaderModule)
+	if (nullptr == vertShaderModule)
 	{
 		std::cerr << "Failed to createGraphicsPipeline" << std::endl;
 		return false;
@@ -333,7 +334,7 @@ bool VulkanRenderer::createGraphicsPipeline()
 
 	std::vector<char> fragShaderCode = fragShader.readShaderFile("shaders/frag.spv");
 	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
-	if (nullptr != fragShaderModule)
+	if (nullptr == fragShaderModule)
 	{
 		std::cerr << "Failed to createGraphicsPipeline" << std::endl;
 		return false;
@@ -412,6 +413,28 @@ bool VulkanRenderer::createGraphicsPipeline()
 		return false;
 	}
 
+	VkGraphicsPipelineCreateInfo pipelineInfo{};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount = 2;
+	pipelineInfo.pStages = shaderStages;
+	pipelineInfo.pVertexInputState = &vertexInputInfo;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pViewportState = &viewportState;
+	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pMultisampleState = &multisampling;
+	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.pDynamicState = &dynamicState;
+	pipelineInfo.layout = mPipelineLayout;
+	pipelineInfo.renderPass = mRenderPass;
+	pipelineInfo.subpass = 0;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+
+	if (VK_SUCCESS != vkCreateGraphicsPipelines(mDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &mGraphicsPipeline))
+	{
+		std::cerr << "Failed to create graphics pipeline" << std::endl;
+		return false;
+	}
+
 	vkDestroyShaderModule(mDevice, fragShaderModule, nullptr);
 	vkDestroyShaderModule(mDevice, vertShaderModule, nullptr);
 	return true;
@@ -421,7 +444,7 @@ VkShaderModule VulkanRenderer::createShaderModule(const std::vector<char>& code)
 {
 	VkShaderModuleCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	createInfo.codeSize = 4 * code.size();
+	createInfo.codeSize = code.size();
 	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
 	VkShaderModule shaderModule;

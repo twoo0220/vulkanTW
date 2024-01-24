@@ -44,7 +44,8 @@ bool MainEntry::initVulkan()
 		mVkRenderer.createSwapChain(mWindow) &&
 		mVkRenderer.createImageViews() &&
 		mVkRenderer.createRenderPass() &&
-		mVkRenderer.createGraphicsPipeline()
+		mVkRenderer.createGraphicsPipeline() &&
+		mVkRenderer.createFrameBuffers()
 		)
 	{
 		return true;

@@ -9,6 +9,11 @@ VulkanRenderer::VulkanRenderer()
 
 VulkanRenderer::~VulkanRenderer()
 {
+	for (VkFramebuffer framebuffer : mSwapChainFrameBuffers)
+	{
+		if (nullptr != framebuffer) vkDestroyFramebuffer(mDevice, framebuffer, nullptr);
+	}
+
 	if (nullptr != mGraphicsPipeline) vkDestroyPipeline(mDevice, mGraphicsPipeline, nullptr);
 	if (nullptr != mPipelineLayout) vkDestroyPipelineLayout(mDevice, mPipelineLayout, nullptr);
 	if (nullptr != mRenderPass) vkDestroyRenderPass(mDevice, mRenderPass, nullptr);
@@ -30,6 +35,7 @@ bool VulkanRenderer::createInstance()
 	if ((true == mEnableValidationLayers) && !checkValidationLayerSupport())
 	{
 		std::cerr << "validation layers requested, but not available " << mEnableValidationLayers << std::endl;
+		std::cerr << "Make sure you have the Vulkan SDK installed." << std::endl;
 		return false;
 		//throw std::runtime_error("validation layers requested, but not available");
 	}
@@ -437,6 +443,36 @@ bool VulkanRenderer::createGraphicsPipeline()
 
 	vkDestroyShaderModule(mDevice, fragShaderModule, nullptr);
 	vkDestroyShaderModule(mDevice, vertShaderModule, nullptr);
+	return true;
+}
+
+bool VulkanRenderer::createFrameBuffers()
+{
+	size_t framebufferSize = mSwapChainImageViewVector.size();
+	mSwapChainFrameBuffers.resize(framebufferSize);
+
+	for (size_t i = 0; i < framebufferSize; ++i)
+	{
+		VkImageView attachments[] = {
+			mSwapChainImageViewVector[i]
+		};
+
+		VkFramebufferCreateInfo framebufferInfo{};
+		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferInfo.renderPass = mRenderPass;
+		framebufferInfo.attachmentCount = 1;
+		framebufferInfo.pAttachments = attachments;
+		framebufferInfo.width = mSwapChainExtent.width;
+		framebufferInfo.height = mSwapChainExtent.height;
+		framebufferInfo.layers = 1;
+
+		if (VK_SUCCESS != vkCreateFramebuffer(mDevice, &framebufferInfo, nullptr, &mSwapChainFrameBuffers[i]))
+		{
+			std::cerr << "Failed to create framebuffer[" << i << "]" << std::endl;
+			return false;
+		}
+	}
+
 	return true;
 }
 

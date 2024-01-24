@@ -23,6 +23,7 @@ public:
 	bool createImageViews();
 	bool createRenderPass();
 	bool createGraphicsPipeline();
+	bool createFrameBuffers();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 
@@ -56,6 +57,7 @@ private:
 	VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
 	std::vector<VkImage> mSwapChainImageVector;
 	std::vector<VkImageView> mSwapChainImageViewVector;
+	std::vector<VkFramebuffer> mSwapChainFrameBuffers;
 
 	VkFormat mSwapChainImageFormat = VK_FORMAT_MAX_ENUM;
 	VkExtent2D mSwapChainExtent{};

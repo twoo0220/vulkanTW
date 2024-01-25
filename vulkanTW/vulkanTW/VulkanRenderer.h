@@ -24,6 +24,8 @@ public:
 	bool createRenderPass();
 	bool createGraphicsPipeline();
 	bool createFrameBuffers();
+	bool createCommandPool();
+	bool createCommandBuffer();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 
@@ -35,6 +37,7 @@ private:
 	bool checkValidationLayerSupport();
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool isDeviceSuitable(VkPhysicalDevice device);
+	bool recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
@@ -58,6 +61,8 @@ private:
 	std::vector<VkImage> mSwapChainImageVector;
 	std::vector<VkImageView> mSwapChainImageViewVector;
 	std::vector<VkFramebuffer> mSwapChainFrameBuffers;
+	VkCommandPool mCommandPool = VK_NULL_HANDLE;
+	VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
 
 	VkFormat mSwapChainImageFormat = VK_FORMAT_MAX_ENUM;
 	VkExtent2D mSwapChainExtent{};

@@ -45,7 +45,9 @@ bool MainEntry::initVulkan()
 		mVkRenderer.createImageViews() &&
 		mVkRenderer.createRenderPass() &&
 		mVkRenderer.createGraphicsPipeline() &&
-		mVkRenderer.createFrameBuffers()
+		mVkRenderer.createFrameBuffers() &&
+		mVkRenderer.createCommandPool() &&
+		mVkRenderer.createCommandBuffer()
 		)
 	{
 		return true;

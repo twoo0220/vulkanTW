@@ -47,9 +47,11 @@ bool MainEntry::initVulkan()
 		mVkRenderer.createGraphicsPipeline() &&
 		mVkRenderer.createFrameBuffers() &&
 		mVkRenderer.createCommandPool() &&
-		mVkRenderer.createCommandBuffer()
+		mVkRenderer.createCommandBuffer() &&
+		mVkRenderer.createSyncObjects()
 		)
 	{
+		std::cout << "Vulkan initialization Success!" << std::endl;
 		return true;
 	}
 
@@ -68,7 +70,21 @@ void MainEntry::mainLoop()
 	{
 		glfwPollEvents();
 		//mImGuiRenderer.update();
+
+		// Wait for the previous frame to finish
+		// Acquire an image from the swap chain
+		// Record a command buffer which draws the scene onto that image
+		// Submit the recorded command buffer
+		// Present the swap chain image
+
+		if (false == mVkRenderer.drawFrame())
+		{
+			//rendering fail
+			std::cout << "Rendering Failed " << std::endl;
+		}
 	}
+
+	mVkRenderer.WaitIdle();
 }
 
 void MainEntry::cleanup()

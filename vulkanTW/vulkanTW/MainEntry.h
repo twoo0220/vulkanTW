@@ -33,6 +33,7 @@ private:
 	void mainLoop();
 	void cleanup();
 
+private:
 	GLFWwindow* mWindow{};
 	VulkanRenderer mVkRenderer{};
 	//ImGuiRenderer mImGuiRenderer;

@@ -26,6 +26,11 @@ public:
 	bool createFrameBuffers();
 	bool createCommandPool();
 	bool createCommandBuffer();
+	bool createSyncObjects();
+	
+	bool drawFrame();
+	void WaitIdle();
+
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 
@@ -61,14 +66,19 @@ private:
 	std::vector<VkImage> mSwapChainImageVector;
 	std::vector<VkImageView> mSwapChainImageViewVector;
 	std::vector<VkFramebuffer> mSwapChainFrameBuffers;
-	VkCommandPool mCommandPool = VK_NULL_HANDLE;
-	VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
 
 	VkFormat mSwapChainImageFormat = VK_FORMAT_MAX_ENUM;
 	VkExtent2D mSwapChainExtent{};
 	VkRenderPass mRenderPass = VK_NULL_HANDLE;
 	VkPipeline mGraphicsPipeline = VK_NULL_HANDLE;
 	VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
+
+	VkCommandPool mCommandPool = VK_NULL_HANDLE;
+	VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
+
+	VkSemaphore mImageAvailableSemaphore = VK_NULL_HANDLE;
+	VkSemaphore mRenderFinishedSemaphore = VK_NULL_HANDLE;
+	VkFence mInFlightFence;
 
 	Shader vertexShader;
 	Shader fragShader;

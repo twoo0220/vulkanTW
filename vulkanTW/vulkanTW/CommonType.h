@@ -3,6 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <optional>
 #include <vector>
+#include <chrono>
+
+#define MAX_FRAMES_IN_FLIGHT 2
 
 struct QueueFamilyIndices
 {

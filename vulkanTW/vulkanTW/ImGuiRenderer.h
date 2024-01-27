@@ -16,5 +16,5 @@ public:
 	void update();
 
 private:
-	GLFWwindow* mGLFWWindow;
+	GLFWwindow* mGLFWWindow = nullptr;
 };

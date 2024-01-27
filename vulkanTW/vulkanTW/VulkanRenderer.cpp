@@ -9,9 +9,13 @@ VulkanRenderer::VulkanRenderer()
 
 VulkanRenderer::~VulkanRenderer()
 {
-	if (nullptr != mImageAvailableSemaphore) vkDestroySemaphore(mDevice, mImageAvailableSemaphore, nullptr);
-	if (nullptr != mRenderFinishedSemaphore) vkDestroySemaphore(mDevice, mRenderFinishedSemaphore, nullptr);
-	if (nullptr != mInFlightFence) vkDestroyFence(mDevice, mInFlightFence, nullptr);
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+	{
+		if (nullptr != mImageAvailableSemaphoreVector[i]) vkDestroySemaphore(mDevice, mImageAvailableSemaphoreVector[i], nullptr);
+		if (nullptr != mRenderFinishedSemaphoreVector[i]) vkDestroySemaphore(mDevice, mRenderFinishedSemaphoreVector[i], nullptr);
+		if (nullptr != mInFlightFenceVector[i]) vkDestroyFence(mDevice, mInFlightFenceVector[i], nullptr);
+	}
+
 	if (nullptr != mCommandPool) vkDestroyCommandPool(mDevice, mCommandPool, nullptr);
 
 	for (VkFramebuffer framebuffer : mSwapChainFrameBuffers)
@@ -510,13 +514,15 @@ bool VulkanRenderer::createCommandPool()
 
 bool VulkanRenderer::createCommandBuffer()
 {
+	mCommandBufferVector.resize(MAX_FRAMES_IN_FLIGHT);
+
 	VkCommandBufferAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.commandPool = mCommandPool;
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandBufferCount = 1;
+	allocInfo.commandBufferCount = static_cast<uint32_t>(mCommandBufferVector.size());
 
-	if (VK_SUCCESS != vkAllocateCommandBuffers(mDevice, &allocInfo, &mCommandBuffer))
+	if (VK_SUCCESS != vkAllocateCommandBuffers(mDevice, &allocInfo, mCommandBufferVector.data()))
 	{
 		std::cerr << "Failed to allocate command buffer" << std::endl;
 		return false;
@@ -527,6 +533,10 @@ bool VulkanRenderer::createCommandBuffer()
 
 bool VulkanRenderer::createSyncObjects()
 {
+	mImageAvailableSemaphoreVector.resize(MAX_FRAMES_IN_FLIGHT);
+	mRenderFinishedSemaphoreVector.resize(MAX_FRAMES_IN_FLIGHT);
+	mInFlightFenceVector.resize(MAX_FRAMES_IN_FLIGHT);
+
 	VkSemaphoreCreateInfo semaphoreInfo{};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -534,13 +544,16 @@ bool VulkanRenderer::createSyncObjects()
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	if ((VK_SUCCESS != vkCreateSemaphore(mDevice, &semaphoreInfo, nullptr, &mImageAvailableSemaphore)) ||
-		(VK_SUCCESS != vkCreateSemaphore(mDevice, &semaphoreInfo, nullptr, &mRenderFinishedSemaphore)) ||
-		(VK_SUCCESS != vkCreateFence(mDevice, &fenceInfo, nullptr, &mInFlightFence))
-		)
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 	{
-		std::cerr << "Failed to create semaphore" << std::endl;
-		return false;
+		if ((VK_SUCCESS != vkCreateSemaphore(mDevice, &semaphoreInfo, nullptr, &mImageAvailableSemaphoreVector[i])) ||
+			(VK_SUCCESS != vkCreateSemaphore(mDevice, &semaphoreInfo, nullptr, &mRenderFinishedSemaphoreVector[i])) ||
+			(VK_SUCCESS != vkCreateFence(mDevice, &fenceInfo, nullptr, &mInFlightFenceVector[i]))
+			)
+		{
+			std::cerr << "Failed to create semaphore" << std::endl;
+			return false;
+		}
 	}
 
 	return true;
@@ -565,31 +578,31 @@ VkShaderModule VulkanRenderer::createShaderModule(const std::vector<char>& code)
 
 bool VulkanRenderer::drawFrame()
 {
-	vkWaitForFences(mDevice, 1, &mInFlightFence, VK_TRUE, UINT64_MAX);
-	vkResetFences(mDevice, 1, &mInFlightFence);
+	vkWaitForFences(mDevice, 1, &mInFlightFenceVector[mCurrentFrame], VK_TRUE, UINT64_MAX);
+	vkResetFences(mDevice, 1, &mInFlightFenceVector[mCurrentFrame]);
 
 	uint32_t imageIndex = UINT32_MAX;
-	vkAcquireNextImageKHR(mDevice, mSwapChain, UINT64_MAX, mImageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+	vkAcquireNextImageKHR(mDevice, mSwapChain, UINT64_MAX, mImageAvailableSemaphoreVector[mCurrentFrame], VK_NULL_HANDLE, &imageIndex);
 	
-	vkResetCommandBuffer(mCommandBuffer, 0);
-	recordCommandBuffer(mCommandBuffer, imageIndex);
+	vkResetCommandBuffer(mCommandBufferVector[mCurrentFrame], 0);
+	recordCommandBuffer(mCommandBufferVector[mCurrentFrame], imageIndex);
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore waitSemaphores[] = { mImageAvailableSemaphore };
+	VkSemaphore waitSemaphores[] = { mImageAvailableSemaphoreVector[mCurrentFrame] };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = waitSemaphores;
 	submitInfo.pWaitDstStageMask = waitStages;
 	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &mCommandBuffer;
+	submitInfo.pCommandBuffers = &mCommandBufferVector[mCurrentFrame];
 
-	VkSemaphore signalSemaphores[] = { mRenderFinishedSemaphore };
+	VkSemaphore signalSemaphores[] = { mRenderFinishedSemaphoreVector[mCurrentFrame] };
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	if (VK_SUCCESS != vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, mInFlightFence))
+	if (VK_SUCCESS != vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, mInFlightFenceVector[mCurrentFrame]))
 	{
 		std::cerr << "Failed to submit draw command buffer" << std::endl;
 		return false;
@@ -607,6 +620,8 @@ bool VulkanRenderer::drawFrame()
 	presentInfo.pImageIndices = &imageIndex;
 	
 	vkQueuePresentKHR(mPresentQueue, &presentInfo);
+
+	mCurrentFrame = (mCurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 	return true;
 }
 

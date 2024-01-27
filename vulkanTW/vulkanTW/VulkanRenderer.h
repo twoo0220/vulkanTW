@@ -74,14 +74,15 @@ private:
 	VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
 
 	VkCommandPool mCommandPool = VK_NULL_HANDLE;
-	VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
+	std::vector<VkCommandBuffer> mCommandBufferVector;
 
-	VkSemaphore mImageAvailableSemaphore = VK_NULL_HANDLE;
-	VkSemaphore mRenderFinishedSemaphore = VK_NULL_HANDLE;
-	VkFence mInFlightFence;
+	std::vector<VkSemaphore> mImageAvailableSemaphoreVector;
+	std::vector<VkSemaphore> mRenderFinishedSemaphoreVector;
+	std::vector<VkFence> mInFlightFenceVector;
 
 	Shader vertexShader;
 	Shader fragShader;
+	uint32_t mCurrentFrame = 0;
 
 	VkDebugUtilsMessengerEXT mDebugMessenger{};
 	VkDebugUtilsMessengerCreateInfoEXT mCreateInfo{};

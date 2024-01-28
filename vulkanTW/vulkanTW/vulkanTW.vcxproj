@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CommonType.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="ImGuiRenderer.cpp" />
     <ClCompile Include="imgui_demo.cpp" />

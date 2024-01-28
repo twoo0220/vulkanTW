@@ -54,7 +54,7 @@ private:
 
 
 private:
-	VkInstance mInstance = VK_NULL_HANDLE;
+	//VkInstance mInstance = VK_NULL_HANDLE;
 	VkSurfaceKHR mSurface = VK_NULL_HANDLE;
 
 	VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;

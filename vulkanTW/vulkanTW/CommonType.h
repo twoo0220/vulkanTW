@@ -24,3 +24,6 @@ struct SwapChainSupportDetails
 	std::vector<VkSurfaceFormatKHR> formats;
 	std::vector<VkPresentModeKHR> presentModes;
 };
+
+// Global variable
+extern VkInstance g_Instance;

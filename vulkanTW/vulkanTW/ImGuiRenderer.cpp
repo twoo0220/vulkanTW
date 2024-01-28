@@ -7,6 +7,39 @@ static void check_vk_result(VkResult err)
 	if (err < 0) abort();
 }
 
+static VkPhysicalDevice SetupVulkan_SelectPhysicalDevice()
+{
+	uint32_t gpu_count = 1;
+	VkResult result = vkEnumeratePhysicalDevices(g_Instance, &gpu_count, nullptr);
+	check_vk_result(result);
+
+	ImVector<VkPhysicalDevice> gpus;
+	gpus.resize(gpu_count);
+	result = vkEnumeratePhysicalDevices(g_Instance, &gpu_count, gpus.Data);
+	check_vk_result(result);
+	
+	// If a number > 1 of GPUs got reported, find discreate GPU if present, or use first one available.
+
+	for (VkPhysicalDevice& device : gpus)
+	{
+		VkPhysicalDeviceProperties properties;
+		vkGetPhysicalDeviceProperties(device, &properties);
+		if (VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU == properties.deviceType)
+		{
+			return device;
+		}
+	}
+
+	// Use first GPU (Integrated) is a Discrete one is not available.
+	if (gpu_count > 0)
+		return gpus[0];
+	return VK_NULL_HANDLE;
+}
+
+static void SetupVulkan(ImVector<const char*> instance_extensions)
+{
+}
+
 ImGuiRenderer::ImGuiRenderer(GLFWwindow* window)
 	: mGLFWWindow(window)
 {
@@ -36,7 +69,7 @@ void ImGuiRenderer::initialize()
 	poolInfo.poolSizeCount = sizeof(poolSize);
 	poolInfo.pPoolSizes = poolSize;
 
-	VkDescriptorPool imguiPool;
+	//VkDescriptorPool imguiPool;
 	//ImGui_ImplVulkanH_Window* wd = &g_MainWindowData;
 
 	//// Setup Dear ImGui context

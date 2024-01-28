@@ -34,9 +34,9 @@ VulkanRenderer::~VulkanRenderer()
 
 	if (nullptr != mSwapChain)	vkDestroySwapchainKHR(mDevice, mSwapChain, nullptr);
 	if (nullptr != mDevice)		vkDestroyDevice(mDevice, nullptr);
-	if (true == mEnableValidationLayers)	DestroyDebugUtilsMessengerEXT(mInstance, mDebugMessenger, nullptr);
-	if (nullptr != mSurface)	vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
-	if (nullptr != mInstance)	vkDestroyInstance(mInstance, nullptr);
+	if (true == mEnableValidationLayers)	DestroyDebugUtilsMessengerEXT(g_Instance, mDebugMessenger, nullptr);
+	if (nullptr != mSurface)	vkDestroySurfaceKHR(g_Instance, mSurface, nullptr);
+	if (nullptr != g_Instance)	vkDestroyInstance(g_Instance, nullptr);
 }
 
 bool VulkanRenderer::createInstance()
@@ -80,7 +80,7 @@ bool VulkanRenderer::createInstance()
 		createInfo.pNext = nullptr;
 	}
 
-	if (VK_SUCCESS != vkCreateInstance(&createInfo, nullptr, &mInstance))
+	if (VK_SUCCESS != vkCreateInstance(&createInfo, nullptr, &g_Instance))
 	{
 		std::cerr << "failed to create instance!" << std::endl;
 		//throw std::runtime_error("failed to create instance!");
@@ -92,7 +92,7 @@ bool VulkanRenderer::createInstance()
 
 bool VulkanRenderer::createSurface(GLFWwindow* window)
 {
-	if (VK_SUCCESS != glfwCreateWindowSurface(mInstance, window, nullptr, &mSurface))
+	if (VK_SUCCESS != glfwCreateWindowSurface(g_Instance, window, nullptr, &mSurface))
 	{
 		std::cerr << "failed to create window surface!" << std::endl;
 		return false;
@@ -111,7 +111,7 @@ bool VulkanRenderer::setupDebugMessenger()
 	VkDebugUtilsMessengerCreateInfoEXT createInfo{};
 	populateDebugMessengerCreateInfo(createInfo);
 
-	if (VK_SUCCESS != CreateDebugUtilsMessengerEXT(mInstance, &createInfo, nullptr, &mDebugMessenger))
+	if (VK_SUCCESS != CreateDebugUtilsMessengerEXT(g_Instance, &createInfo, nullptr, &mDebugMessenger))
 	{
 		std::cerr << "failed to set up debug messenger!" << std::endl;
 		return false;
@@ -124,7 +124,7 @@ bool VulkanRenderer::setupDebugMessenger()
 bool VulkanRenderer::pickPhysicalDevice()
 {
 	uint32_t deviceCount = 0;
-	vkEnumeratePhysicalDevices(mInstance, &deviceCount, nullptr);
+	vkEnumeratePhysicalDevices(g_Instance, &deviceCount, nullptr);
 
 	if (0 == deviceCount)
 	{
@@ -134,7 +134,7 @@ bool VulkanRenderer::pickPhysicalDevice()
 	}
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
-	vkEnumeratePhysicalDevices(mInstance, &deviceCount, devices.data());
+	vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices.data());
 
 	for (const VkPhysicalDevice& dev : devices)
 	{

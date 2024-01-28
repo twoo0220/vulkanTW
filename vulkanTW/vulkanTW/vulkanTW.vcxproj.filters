@@ -34,6 +34,9 @@
     <Filter Include="Header Files\Shader">
       <UniqueIdentifier>{ce5962e1-b5e9-42c8-a0b2-a9ad4966bbd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{0322d51d-9849-4d0b-9d67-8689656b230c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonType.cpp">
+      <Filter>Source Files\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

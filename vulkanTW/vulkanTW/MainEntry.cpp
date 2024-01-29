@@ -31,6 +31,11 @@ void MainEntry::initWindow()
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	mWindow = glfwCreateWindow(mWidth, mHeight, "VulkanTW", nullptr, nullptr);
+	if (!glfwVulkanSupported())
+	{
+		std::cout << "GLFW: Vulkan Not Supported!" << std::endl;
+		return;
+	}
 }
 
 bool MainEntry::initVulkan()

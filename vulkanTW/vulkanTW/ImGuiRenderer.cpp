@@ -1,12 +1,5 @@
 #include "ImGuiRenderer.h"
 
-static void check_vk_result(VkResult err)
-{
-	if (err == 0) return;
-	fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
-	if (err < 0) abort();
-}
-
 static VkPhysicalDevice SetupVulkan_SelectPhysicalDevice()
 {
 	uint32_t gpu_count = 1;
@@ -36,12 +29,9 @@ static VkPhysicalDevice SetupVulkan_SelectPhysicalDevice()
 	return VK_NULL_HANDLE;
 }
 
-static void SetupVulkan(ImVector<const char*> instance_extensions)
-{
-}
-
 ImGuiRenderer::ImGuiRenderer(GLFWwindow* window)
 	: mGLFWWindow(window)
+	, mWD(&g_ImGuiVulkanWindowData)
 {
 }
 
@@ -101,11 +91,57 @@ void ImGuiRenderer::initialize()
 	//init_info.Allocator = g_Allocator;
 	//init_info.CheckVkResultFn = check_vk_result;
 	//ImGui_ImplVulkan_Init(&init_info, wd->RenderPass);
+
+	glfwSetErrorCallback(glfw_error_callback);
 	
 }
 
+// FrameRenderer
 void ImGuiRenderer::update()
 {
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 
+	ImGui::Render();
+	ImDrawData* draw_data = ImGui::GetDrawData();
+	const bool is_minized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
+	if (!is_minized)
+	{
+		//mWD->ClearValue.color.float32[0] = clear_color.x * clear_color.w;
+
+		VkResult err;
+		VkSemaphore image_acquired_semaphore = mWD->FrameSemaphores[mWD->SemaphoreIndex].ImageAcquiredSemaphore;
+		VkSemaphore render_complete_semaphore = mWD->FrameSemaphores[mWD->SemaphoreIndex].RenderCompleteSemaphore;
+		// err = vkAcquireNextImageKHR(
+		//	g_Device,
+		//	mWD->Swapchain,
+		//	UINT64_MAX,
+		//	image_acquired_semaphore,
+		//	VK_NULL_HANDLE,
+		//	&mWD->FrameIndex);
+		//if ((VK_ERROR_OUT_OF_DATE_KHR == err) || (VK_SUBOPTIMAL_KHR == err))
+		//{
+		//	g_SwapChainRebuild = true;
+		//	return;
+		//}
+
+		//ImGui_ImplVulkanH_Frame* fd = &mWD->Frames[mWD->FrameIndex];
+		//{
+		//	err = vkWaitForFences(g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX); // wait indefinitely instead of periodically checking
+		//	check_vk_result(err);
+
+		//	err = vkResetFences(g_Device, 1, &fd->Fence);
+		//	check_vk_result(err);
+		//}
+		//{
+		//	err = vkResetCommandPool(g_Device, fd->CommandPool, 0);
+		//	check_vk_result(err);
+		//	VkCommandBufferBeginInfo info{};
+		//	info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		//	info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		//	err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
+		//	check_vk_result(err);
+		//}
+	}
 }
-

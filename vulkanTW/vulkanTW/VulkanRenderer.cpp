@@ -103,19 +103,17 @@ bool VulkanRenderer::createSurface(GLFWwindow* window)
 
 bool VulkanRenderer::setupDebugMessenger()
 {
-	if (false == mEnableValidationLayers)
+	if (mEnableValidationLayers)
 	{
-		return false;
-	}
+		VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+		populateDebugMessengerCreateInfo(createInfo);
 
-	VkDebugUtilsMessengerCreateInfoEXT createInfo{};
-	populateDebugMessengerCreateInfo(createInfo);
-
-	if (VK_SUCCESS != CreateDebugUtilsMessengerEXT(g_Instance, &createInfo, nullptr, &mDebugMessenger))
-	{
-		std::cerr << "failed to set up debug messenger!" << std::endl;
-		return false;
-		//throw std::runtime_error("failed to set up debug messenger!");
+		if (VK_SUCCESS != CreateDebugUtilsMessengerEXT(g_Instance, &createInfo, nullptr, &mDebugMessenger))
+		{
+			std::cerr << "failed to set up debug messenger!" << std::endl;
+			return false;
+			//throw std::runtime_error("failed to set up debug messenger!");
+		}
 	}
 
 	return true;
@@ -180,7 +178,7 @@ bool VulkanRenderer::createLogicalDevice()
 
 	//createInfo.enabledExtensionCount = 0; //이거 오류 블로그에 적어둘것
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(mDeviceExtensions.size());
-	createInfo.ppEnabledExtensionNames = mDeviceExtensions.data(); 
+	createInfo.ppEnabledExtensionNames = mDeviceExtensions.data();
 
 	VkPhysicalDeviceFeatures deviceFeatures{};
 	createInfo.pEnabledFeatures = &deviceFeatures;
@@ -405,7 +403,7 @@ bool VulkanRenderer::createGraphicsPipeline()
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	
+
 	VkPipelineColorBlendStateCreateInfo colorBlending{};
 	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	colorBlending.logicOpEnable = VK_FALSE;
@@ -583,7 +581,7 @@ bool VulkanRenderer::drawFrame()
 
 	uint32_t imageIndex = UINT32_MAX;
 	vkAcquireNextImageKHR(mDevice, mSwapChain, UINT64_MAX, mImageAvailableSemaphoreVector[mCurrentFrame], VK_NULL_HANDLE, &imageIndex);
-	
+
 	vkResetCommandBuffer(mCommandBufferVector[mCurrentFrame], 0);
 	recordCommandBuffer(mCommandBufferVector[mCurrentFrame], imageIndex);
 
@@ -618,7 +616,7 @@ bool VulkanRenderer::drawFrame()
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = swapChains;
 	presentInfo.pImageIndices = &imageIndex;
-	
+
 	vkQueuePresentKHR(mPresentQueue, &presentInfo);
 
 	mCurrentFrame = (mCurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
@@ -842,7 +840,7 @@ QueueFamilyIndices VulkanRenderer::findQueueFamilies(VkPhysicalDevice device)
 	QueueFamilyIndices indices;
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-	
+
 	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 

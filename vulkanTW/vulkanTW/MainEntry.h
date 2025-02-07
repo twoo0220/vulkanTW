@@ -15,6 +15,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <chrono>
 
 #include "VulkanRenderer.h"
 #include "ImGuiRenderer.h"
@@ -32,6 +33,8 @@ private:
 	bool initVulkan();
 	void mainLoop();
 	void cleanup();
+
+	void printFPS();
 
 private:
 	GLFWwindow* mWindow{};

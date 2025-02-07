@@ -87,6 +87,8 @@ void MainEntry::mainLoop()
 			//rendering fail
 			std::cout << "Rendering Failed " << std::endl;
 		}
+
+		printFPS();
 	}
 
 	mVkRenderer.WaitIdle();
@@ -99,3 +101,18 @@ void MainEntry::cleanup()
 	glfwTerminate();
 }
 
+void MainEntry::printFPS()
+{
+	static std::chrono::time_point<std::chrono::high_resolution_clock> prevtime = std::chrono::high_resolution_clock::now();
+	static int fps;
+
+	fps++;
+
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - prevtime).count() > 1000)
+	{
+		// TODO : Output to screen via font engine rather than console output
+		std::cout << "FPS: " << fps << std::endl;
+		prevtime = std::chrono::high_resolution_clock::now();
+		fps = 0;
+	}
+}

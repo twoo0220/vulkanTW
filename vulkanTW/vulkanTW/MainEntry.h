@@ -39,7 +39,7 @@ private:
 private:
 	GLFWwindow* mWindow{};
 	VulkanRenderer mVkRenderer{};
-	//ImGuiRenderer mImGuiRenderer;
+	ImGuiRenderer mImGuiRenderer;
 
 	const uint32_t mWidth;
 	const uint32_t mHeight;

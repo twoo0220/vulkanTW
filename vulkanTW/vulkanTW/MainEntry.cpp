@@ -74,7 +74,7 @@ void MainEntry::mainLoop()
 	while (!glfwWindowShouldClose(mWindow))
 	{
 		glfwPollEvents();
-		//mImGuiRenderer.update();
+		mImGuiRenderer.update();
 
 		// Wait for the previous frame to finish
 		// Acquire an image from the swap chain

@@ -14,5 +14,5 @@ public:
 
 private:
 	GLFWwindow* mGLFWWindow = nullptr;
-	ImGui_ImplVulkanH_Window* mWD;
+	ImGui_ImplVulkanH_Window* mWD = nullptr;
 };

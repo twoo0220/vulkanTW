@@ -41,6 +41,10 @@ static void check_vk_result(VkResult err)
 	if (err < 0) abort();
 }
 
-// Global variable
+// Global Vulkan Variable
 extern VkInstance g_Instance;
 extern ImGui_ImplVulkanH_Window g_ImGuiVulkanWindowData;
+extern VkPhysicalDevice g_PhysicalDevice;
+extern VkDevice g_Device;
+extern VkQueue g_GraphicsQueue;
+extern VkQueue g_PresentQueue;

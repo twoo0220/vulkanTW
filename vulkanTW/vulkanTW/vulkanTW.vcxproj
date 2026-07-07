@@ -157,6 +157,7 @@
     <ClCompile Include="MainEntry.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="VulkanRenderer.cpp" />
+    <ClCompile Include="VulkanWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonType.h" />
@@ -173,6 +174,7 @@
     <ClInclude Include="MainEntry.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="VulkanRenderer.h" />
+    <ClInclude Include="VulkanWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\README.md" />

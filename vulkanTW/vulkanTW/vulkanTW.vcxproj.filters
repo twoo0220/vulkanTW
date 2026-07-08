@@ -37,15 +37,18 @@
     <Filter Include="Source Files\Common">
       <UniqueIdentifier>{0322d51d-9849-4d0b-9d67-8689656b230c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\VulkanRenderer">
+      <UniqueIdentifier>{e9ae43c3-9f72-42d6-b5c7-2cce4cd67f1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VulkanRenderer">
+      <UniqueIdentifier>{5b550573-8724-4c2b-856a-11491a19e57f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MainEntry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_vulkan.cpp">
@@ -81,15 +84,15 @@
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanRenderer.cpp">
+      <Filter>Source Files\VulkanRenderer</Filter>
+    </ClCompile>
     <ClCompile Include="VulkanWindow.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\VulkanRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainEntry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommonType.h">
@@ -128,8 +131,11 @@
     <ClInclude Include="Logger.h">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="VulkanRenderer.h">
+      <Filter>Header Files\VulkanRenderer</Filter>
+    </ClInclude>
     <ClInclude Include="VulkanWindow.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\VulkanRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

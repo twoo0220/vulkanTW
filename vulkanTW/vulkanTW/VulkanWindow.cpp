@@ -41,4 +41,24 @@ vulkanWindow::vulkanWindow()
 
 vulkanWindow::~vulkanWindow()
 {
+	if (mGLFWWindow != nullptr)
+	{
+		glfwDestroyWindow(mGLFWWindow);
+		glfwTerminate();
+		mGLFWWindow = nullptr;
+	}
+}
+
+VkExtent2D vulkanWindow::getFrameBufferSize() const
+{
+	int width = 0;
+	int height = 0;
+	glfwGetFramebufferSize(mGLFWWindow, &width, &height);
+
+	return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
+}
+
+void vulkanWindow::pollEvents() const
+{
+	glfwPollEvents();
 }

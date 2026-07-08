@@ -11,6 +11,8 @@ public:
 	vulkanWindow();
 	~vulkanWindow();
 
+	VkExtent2D getFrameBufferSize() const;
+	void pollEvents() const;
 
 private:
 	GLFWwindow* mGLFWWindow = nullptr;

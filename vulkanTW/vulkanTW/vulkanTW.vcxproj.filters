@@ -90,6 +90,9 @@
     <ClCompile Include="VulkanWindow.cpp">
       <Filter>Source Files\VulkanRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanContext.cpp">
+      <Filter>Source Files\VulkanRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainEntry.h">
@@ -135,6 +138,9 @@
       <Filter>Header Files\VulkanRenderer</Filter>
     </ClInclude>
     <ClInclude Include="VulkanWindow.h">
+      <Filter>Header Files\VulkanRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanContext.h">
       <Filter>Header Files\VulkanRenderer</Filter>
     </ClInclude>
   </ItemGroup>

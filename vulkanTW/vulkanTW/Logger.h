@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <vulkan/vulkan.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -17,6 +18,8 @@ public:
 	static Logger& getInstance();
 	static void printLog(std::string message);
 
+	void checkVulkanResult(VkResult result);
+
 private:
 	Logger();
 	Logger(const Logger&) = delete;
@@ -27,8 +30,6 @@ private:
 
 	template<typename T, typename... Args>
 	void formatToStream(std::ostringstream& oss, T&& first, Args&&... args);
-
-
 	
 private:
 	static std::unique_ptr<Logger> mInstance;
@@ -36,7 +37,6 @@ private:
 	size_t mMessagesProcessd = 0;
 };
 
-// Variadic template function to log an error message and terminate the program (C++11 compatible)
 template<typename... Args>
 void exitWithMessage(Args&&... args)
 {
@@ -60,15 +60,6 @@ void exitWithMessage(Args&&... args)
 	exit(EXIT_FAILURE);
 }
 
-////std::format_string since C++20
-//template<typename... Args>
-//void printLog(std::format_string<Args...> fmt, Args&&... args)
-//{
-//	std::string message = std::format(fmt, std::forward<Args>(args)...);
-//	Logger::printlog(message);
-//}
-
-// Variadic template function to log a message (C++11 compatible)
 template <typename... Args>
 void printLog(Args&&... args)
 {
@@ -89,3 +80,6 @@ void printLog(Args&&... args)
 	// Print the log.
 	Logger::printLog(message);
 }
+
+// Vulkan logger utility function
+std::string getResultString(VkResult result);

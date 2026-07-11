@@ -58,6 +58,15 @@ VkExtent2D vulkanWindow::getFrameBufferSize() const
 	return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 }
 
+VkSurfaceKHR vulkanWindow::createVulkanSurface(VkInstance instance)
+{
+	VkSurfaceKHR surface = VK_NULL_HANDLE;
+	VkResult res = glfwCreateWindowSurface(instance, mGLFWWindow, nullptr, &surface);
+	Logger::getInstance().checkVulkanResult(res);
+
+	return surface;
+}
+
 std::vector<const char*> vulkanWindow::getRequiredExtensions()
 {
 	// OS에 따라 필요한 Extension을 GLFW 통해 가져오기
@@ -90,4 +99,19 @@ std::vector<const char*> vulkanWindow::getRequiredExtensions()
 void vulkanWindow::pollEvents() const
 {
 	glfwPollEvents();
+	// 키보드 이벤트를 실제로 처리하는 것은 glfwSetKeyCallback()에서 등록한 콜백함수
+}
+
+bool vulkanWindow::isCloseRequested() const
+{
+	return glfwWindowShouldClose(mGLFWWindow);
+}
+
+bool vulkanWindow::isMinimized() const
+{
+	int width = 0;
+	int height = 0;
+	glfwGetWindowSize(mGLFWWindow, &width, &height);
+
+	return (width == 0 || height == 0);
 }

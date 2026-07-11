@@ -58,6 +58,35 @@ VkExtent2D vulkanWindow::getFrameBufferSize() const
 	return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 }
 
+std::vector<const char*> vulkanWindow::getRequiredExtensions()
+{
+	// OS에 따라 필요한 Extension을 GLFW 통해 가져오기
+	
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+	std::vector<const char*> instanceExtensions;
+
+	// 메모리 재할당 방지를 위해 필요한 크기를 미리 할당 (+1은 PORTABILITY 확장 기능용)
+	instanceExtensions.reserve(glfwExtensionCount + 1);
+
+	// GLFW 확장 기능은 중복이 없으므로 반복문과 std::find 불필요
+	if ((glfwExtensions != nullptr) && (glfwExtensionCount > 0))
+	{
+		instanceExtensions.assign(glfwExtensions, glfwExtensions + glfwExtensionCount);
+	}
+
+	// 필요한 추가 확장 기능 등록
+	instanceExtensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+	printLog("GlfwRequiredInstanceExtensions count: ", glfwExtensionCount);
+
+	for (const char* extension : instanceExtensions)
+	{
+		printLog("  - ", extension);
+	}
+
+	return instanceExtensions;
+}
+
 void vulkanWindow::pollEvents() const
 {
 	glfwPollEvents();

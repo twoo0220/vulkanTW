@@ -60,10 +60,32 @@ void exitWithMessage(Args&&... args)
 	exit(EXIT_FAILURE);
 }
 
-// std::format_string since C++20
+////std::format_string since C++20
 //template<typename... Args>
 //void printLog(std::format_string<Args...> fmt, Args&&... args)
 //{
 //	std::string message = std::format(fmt, std::forward<Args>(args)...);
 //	Logger::printlog(message);
 //}
+
+// Variadic template function to log a message (C++11 compatible)
+template <typename... Args>
+void printLog(Args&&... args)
+{
+	std::ostringstream oss;
+
+	// C++11 pack expansion trick using initializer list to unpack variadic arguments into the stream.
+	// Each argument is appended with a trailing space.
+	int dummy[] = { 0, ((oss << std::forward<Args>(args) << " "), 0)... };
+	(void)dummy; // Prevent unused variable warning
+
+	std::string message = oss.str();
+
+	// Remove the trailing space if the message is not empty.
+	if (!message.empty()) {
+		message.pop_back();
+	}
+
+	// Print the log.
+	Logger::printLog(message);
+}

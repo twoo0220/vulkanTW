@@ -12,7 +12,9 @@ public:
 	~vulkanWindow();
 
 	VkExtent2D getFrameBufferSize() const;
+	std::vector<const char*> getRequiredExtensions();
 	void pollEvents() const;
+
 
 private:
 	GLFWwindow* mGLFWWindow = nullptr;

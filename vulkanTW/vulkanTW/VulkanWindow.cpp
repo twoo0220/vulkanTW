@@ -115,3 +115,33 @@ bool vulkanWindow::isMinimized() const
 
 	return (width == 0 || height == 0);
 }
+
+void vulkanWindow::setUserPointer(void* userPointer)
+{
+	glfwSetWindowUserPointer(mGLFWWindow, userPointer);
+}
+
+void vulkanWindow::setKeyCallback(GLFWkeyfun callback)
+{
+	glfwSetKeyCallback(mGLFWWindow, callback);
+}
+
+void vulkanWindow::setMouseButtonCallback(GLFWmousebuttonfun callback)
+{
+	glfwSetMouseButtonCallback(mGLFWWindow, callback);
+}
+
+void vulkanWindow::setCursorPosCallback(GLFWcursorposfun callback)
+{
+	glfwSetCursorPosCallback(mGLFWWindow, callback);
+}
+
+void vulkanWindow::setScrollCallback(GLFWscrollfun callback)
+{
+	glfwSetScrollCallback(mGLFWWindow, callback);
+}
+
+void vulkanWindow::setFramebufferSizeCallback(GLFWframebuffersizefun callback)
+{
+	glfwSetFramebufferSizeCallback(mGLFWWindow, callback);
+}

@@ -18,6 +18,13 @@ public:
 	bool isCloseRequested() const;
 	bool isMinimized() const;
 
+	void setUserPointer(void* userPointer);
+	void setKeyCallback(GLFWkeyfun callback);
+	void setMouseButtonCallback(GLFWmousebuttonfun callback);
+	void setCursorPosCallback(GLFWcursorposfun callback);
+	void setScrollCallback(GLFWscrollfun callback);
+	void setFramebufferSizeCallback(GLFWframebuffersizefun callback);
+
 private:
 	GLFWwindow* mGLFWWindow = nullptr;
 };

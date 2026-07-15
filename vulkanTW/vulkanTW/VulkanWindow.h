@@ -5,11 +5,11 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
-class vulkanWindow
+class VulkanWindow
 {
 public:
-	vulkanWindow();
-	~vulkanWindow();
+	VulkanWindow();
+	~VulkanWindow();
 
 	VkExtent2D getFrameBufferSize() const;
 	VkSurfaceKHR createVulkanSurface(VkInstance instance);

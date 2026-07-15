@@ -1,6 +1,6 @@
 #include "VulkanWindow.h"
 
-vulkanWindow::vulkanWindow()
+VulkanWindow::VulkanWindow()
 {
 	constexpr float aspectRatio = 16.0f / 9.0f;
 	constexpr float outRatio = 0.8f;
@@ -39,7 +39,7 @@ vulkanWindow::vulkanWindow()
 	}
 }
 
-vulkanWindow::~vulkanWindow()
+VulkanWindow::~VulkanWindow()
 {
 	if (mGLFWWindow != nullptr)
 	{
@@ -49,7 +49,7 @@ vulkanWindow::~vulkanWindow()
 	}
 }
 
-VkExtent2D vulkanWindow::getFrameBufferSize() const
+VkExtent2D VulkanWindow::getFrameBufferSize() const
 {
 	int width = 0;
 	int height = 0;
@@ -58,7 +58,7 @@ VkExtent2D vulkanWindow::getFrameBufferSize() const
 	return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 }
 
-VkSurfaceKHR vulkanWindow::createVulkanSurface(VkInstance instance)
+VkSurfaceKHR VulkanWindow::createVulkanSurface(VkInstance instance)
 {
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
 	VkResult res = glfwCreateWindowSurface(instance, mGLFWWindow, nullptr, &surface);
@@ -67,7 +67,7 @@ VkSurfaceKHR vulkanWindow::createVulkanSurface(VkInstance instance)
 	return surface;
 }
 
-std::vector<const char*> vulkanWindow::getRequiredExtensions()
+std::vector<const char*> VulkanWindow::getRequiredExtensions()
 {
 	// OS에 따라 필요한 Extension을 GLFW 통해 가져오기
 	
@@ -96,18 +96,18 @@ std::vector<const char*> vulkanWindow::getRequiredExtensions()
 	return instanceExtensions;
 }
 
-void vulkanWindow::pollEvents() const
+void VulkanWindow::pollEvents() const
 {
 	glfwPollEvents();
 	// 키보드 이벤트를 실제로 처리하는 것은 glfwSetKeyCallback()에서 등록한 콜백함수
 }
 
-bool vulkanWindow::isCloseRequested() const
+bool VulkanWindow::isCloseRequested() const
 {
 	return glfwWindowShouldClose(mGLFWWindow);
 }
 
-bool vulkanWindow::isMinimized() const
+bool VulkanWindow::isMinimized() const
 {
 	int width = 0;
 	int height = 0;
@@ -116,32 +116,32 @@ bool vulkanWindow::isMinimized() const
 	return (width == 0 || height == 0);
 }
 
-void vulkanWindow::setUserPointer(void* userPointer)
+void VulkanWindow::setUserPointer(void* userPointer)
 {
 	glfwSetWindowUserPointer(mGLFWWindow, userPointer);
 }
 
-void vulkanWindow::setKeyCallback(GLFWkeyfun callback)
+void VulkanWindow::setKeyCallback(GLFWkeyfun callback)
 {
 	glfwSetKeyCallback(mGLFWWindow, callback);
 }
 
-void vulkanWindow::setMouseButtonCallback(GLFWmousebuttonfun callback)
+void VulkanWindow::setMouseButtonCallback(GLFWmousebuttonfun callback)
 {
 	glfwSetMouseButtonCallback(mGLFWWindow, callback);
 }
 
-void vulkanWindow::setCursorPosCallback(GLFWcursorposfun callback)
+void VulkanWindow::setCursorPosCallback(GLFWcursorposfun callback)
 {
 	glfwSetCursorPosCallback(mGLFWWindow, callback);
 }
 
-void vulkanWindow::setScrollCallback(GLFWscrollfun callback)
+void VulkanWindow::setScrollCallback(GLFWscrollfun callback)
 {
 	glfwSetScrollCallback(mGLFWWindow, callback);
 }
 
-void vulkanWindow::setFramebufferSizeCallback(GLFWframebuffersizefun callback)
+void VulkanWindow::setFramebufferSizeCallback(GLFWframebuffersizefun callback)
 {
 	glfwSetFramebufferSizeCallback(mGLFWWindow, callback);
 }

@@ -83,3 +83,4 @@ void printLog(Args&&... args)
 
 // Vulkan logger utility function
 std::string getResultString(VkResult result);
+std::string getPhysicalDeviceTypeString(VkPhysicalDeviceType type);

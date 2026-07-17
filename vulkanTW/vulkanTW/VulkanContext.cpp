@@ -78,6 +78,53 @@ bool VulkanContext::createInstance(std::vector<const char*> instanceExtensions)
 	return result;
 }
 
+bool VulkanContext::selectPhysicalDevice()
+{
+	bool result = false;
+	uint32_t deviceCount = 0;
+	vkEnumeratePhysicalDevices(mInstance, &deviceCount, nullptr);
+
+	if (0 == deviceCount)
+	{
+		exitWithMessage("failed to find GUPs with Vulkan support!");
+	}
+	else
+	{
+		uint32_t deviceCount = 0;
+		vkEnumeratePhysicalDevices(mInstance, &deviceCount, nullptr);
+
+		if (0 == deviceCount)
+		{
+			printLog("failed to find GUPs with Vulkan support!");
+		}
+		else
+		{
+			std::vector<VkPhysicalDevice> devices(deviceCount);
+			vkEnumeratePhysicalDevices(mInstance, &deviceCount, devices.data());
+
+			for (const VkPhysicalDevice& dev : devices)
+			{
+				if (isDeviceSuitable(dev))
+				{
+					mPhysicalDevice = dev;
+					break;
+				}
+			}
+
+			if (VK_NULL_HANDLE != mPhysicalDevice)
+			{
+				result = true;
+			}
+			else
+			{
+				printLog("failed to find a suitable GPU!");
+			}
+		}
+	}
+
+	return result;
+}
+
 void VulkanContext::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 {
 	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -134,3 +181,18 @@ bool VulkanContext::checkValidationLayerSupport() const
 	return true;
 }
 
+bool VulkanContext::isDeviceSuitable(VkPhysicalDevice device)
+{
+	QueueFamilyIndices indices = findQueueFamilies(device);
+
+	bool extensionSupported = checkDeviceExtensionSupport(device);
+
+	bool swapChainAdequate = false;
+	if (true == extensionSupported)
+	{
+		SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+		swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+	}
+
+	return indices.isComplete() && extensionSupported && swapChainAdequate;
+}
